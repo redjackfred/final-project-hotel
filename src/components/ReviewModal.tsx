@@ -67,7 +67,12 @@ export default function ReviewModal({ isOpen, closeModal, updateReviews, hotelId
         await updateReviews(hotelId);
         closeModal();
         alert("Successfully updated a review");        
-      } else {
+      }else if (response.status === 403) {
+        closeModal();
+        alert("You are not authorized to update this review");        
+        window.location.reload(); // Reloads from cache          
+      } 
+      else {
         closeModal();
         alert("Failed to update a review");
       }

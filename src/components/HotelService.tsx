@@ -112,6 +112,7 @@ export default function HotelService({
         } else if (response.status === 403) {
           onLoggedIn(false);
           console.error("Unauthorized access");
+          window.location.reload();
         } else {
           console.error("Failed to search for hotels");
         }
