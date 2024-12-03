@@ -6,6 +6,7 @@ import LogoutButton from "./components/LogoutButton";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [lastLoginTime, setLastLoginTime] = useState("");
   const [username, setUsername] = useState("");
 
   return (
@@ -19,8 +20,11 @@ function App() {
         {isLoggedIn ? (
           <HotelService onLoggedIn={setIsLoggedIn} username={username}/>
         ) : (
-          <LoginForm onLoginClick={setIsLoggedIn} onUserChanged={setUsername}/>
+          <LoginForm onLoginClick={setIsLoggedIn} onUserChanged={setUsername} onLoginTimeChange={setLastLoginTime}/>
         )}
+      </div>
+      <div className="fixed bottom-8 right-8">
+        Last login time: {lastLoginTime}
       </div>
     </>
   );

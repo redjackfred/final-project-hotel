@@ -178,6 +178,7 @@ export default function HotelService({
     } else {
       setAverageRating(0);
       console.error("Failed to fetch hotel details");
+      window.location.reload();
     }
   }
 

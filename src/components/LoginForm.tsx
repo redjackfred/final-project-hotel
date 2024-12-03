@@ -28,10 +28,11 @@ const formSchema = z.object({
 });
 
 export default function LoginForm({
-  onLoginClick, onUserChanged,
+  onLoginClick, onUserChanged, onLoginTimeChange
 }: {
   onLoginClick: (isLoggedIn: boolean) => void;
   onUserChanged: (username: string) => void;
+  onLoginTimeChange: (time: string) => void;
 }) {
   const [isLogin, setIsLogin] = useState(true);
   const form = useForm<z.infer<typeof formSchema>>({
@@ -66,6 +67,7 @@ export default function LoginForm({
         if (isLogin) {
           onUserChanged(values.username);
           onLoginClick(true);
+          onLoginTimeChange(new Date().toLocaleString());
         } else {
           alert("Successfully registered");
         }
