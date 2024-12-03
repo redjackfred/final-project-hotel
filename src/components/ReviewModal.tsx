@@ -14,8 +14,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "./ui/button";
 
 const formSchema = z.object({
-  title: z.string().min(2).max(50),
-  text: z.string().min(8).max(300), 
+  title: z.string().max(50),
+  text: z.string().max(300), 
   rating: z.string().min(0).max(5),
   reviewId: z.string().optional(),
 });
@@ -50,7 +50,8 @@ export default function ReviewModal({ isOpen, closeModal, updateReviews, hotelId
     });
 
     console.log(formBody.toString());
-
+    console.log(`http://localhost:8080/reviews/${hotelId}`);
+    
     try {
       const response = await fetch(`http://localhost:8080/reviews/${hotelId}`, {
         method: method,
