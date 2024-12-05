@@ -29,11 +29,11 @@ export default function Modal({
   return (
     <>
       <div
-        className="fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
+        className="fixed w-screen inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
         onClick={closeModal}
       >
         <div
-          className="absolute bg-white p-6 rounded-lg shadow-lg max-h-[80%] overflow-y-auto"
+          className="absolute w-[92vw] bg-white p-6 rounded-lg shadow-lg max-h-[80%] overflow-y-auto "
           onClick={(e) => e.stopPropagation()}
         >
           <Button

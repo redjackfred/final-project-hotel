@@ -67,7 +67,7 @@ export default function LoginForm({
         if (isLogin) {
           onUserChanged(values.username);
           onLoginClick(true);
-          onLoginTimeChange(new Date().toLocaleString());
+          onLoginTimeChange(data.lastLoginTime);
         } else {
           alert("Successfully registered");
         }

@@ -15,6 +15,15 @@ import { useEffect, useRef, useState } from "react";
 import Hotel from "./Hotel";
 import Modal from "./Modal";
 import ReviewModal from "./ReviewModal";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const formSchema = z.object({
   search: z.string().min(2).max(20),
@@ -73,13 +82,18 @@ export default function HotelService({
   };
 
   function handleDeleteReview() {
-    fetch(`http://localhost:8080/reviews/${selectedHotel!.hotelId}?reviewid=${reviewIdRef.current}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      credentials: "include",
-    })
+    fetch(
+      `http://localhost:8080/reviews/${selectedHotel!.hotelId}?reviewid=${
+        reviewIdRef.current
+      }`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+      }
+    )
       .then((response) => {
         if (response.ok) {
           console.log("Successfully deleted a review");
@@ -245,16 +259,16 @@ export default function HotelService({
           <div className="w-1/2">
             <p className="text-md mb-4">Average Rating : {averageRating}</p>
 
-            <div className="flex flex-col justify-between">
+            <div className="flex flex-col justify-between">              
               {reviews.map((review: Review) => (
                 <div
                   key={review.reviewId}
-                  className="my-4 border rounded-lg p-4"
+                  className="w-full my-4 border rounded-lg p-4"
                 >
                   <h3 className="text-xl text-slate-700 my-4">
                     {review.title}
                   </h3>
-                  <p>{review.reviewText}</p>
+                    <p className="break-words">{review.reviewText}</p>
                   <p className="mt-2">Rating: {review.rating}</p>
                   <p>{review.date}</p>
                   {review.user === username && (
@@ -269,7 +283,7 @@ export default function HotelService({
                         Edit
                       </Button>
                       <Button
-                        onClick={() => {                          
+                        onClick={() => {
                           setReviewId(review.reviewId);
                           reviewIdRef.current = review.reviewId;
                           console.log("Review ID: " + reviewIdRef.current);
@@ -283,6 +297,30 @@ export default function HotelService({
                   <p className="text-right">{review.user}</p>
                 </div>
               ))}
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious href="#" />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#" isActive>1</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">
+                      2
+                    </PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationLink href="#">3</PaginationLink>
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
+                  <PaginationItem>
+                    <PaginationNext href="#" />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
             </div>
           </div>
         ) : (
