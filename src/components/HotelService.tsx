@@ -18,7 +18,6 @@ import ReviewModal from "./ReviewModal";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -64,6 +63,7 @@ export default function HotelService({
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [method, setMethod] = useState("POST");
   const [reviewId, setReviewId] = useState("");
+  const [activePage, setActivePage] = useState(1);
   const reviewIdRef = useRef(reviewId);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -72,6 +72,11 @@ export default function HotelService({
     },
   });
   const resultRef = useRef<HTMLDivElement>(null);
+  const maxReviewsPerPage = 5;
+  const startIndex = (activePage - 1) * maxReviewsPerPage;
+  const endIndex = Math.min(startIndex + maxReviewsPerPage, reviews.length);
+  const lastPage = Math.ceil(reviews.length / maxReviewsPerPage);
+
 
   const openAddReviewModal = () => {
     setIsAddReviewModalOpen(true);
@@ -80,6 +85,12 @@ export default function HotelService({
   const closeAddReviewModal = () => {
     setIsAddReviewModalOpen(false);
   };
+
+  function handlePageClick(index: number) {
+    const page = index + 1;
+    setActivePage(page);
+    console.log("Active page: " + page);   
+  }
 
   function handleDeleteReview() {
     fetch(
@@ -260,7 +271,7 @@ export default function HotelService({
             <p className="text-md mb-4">Average Rating : {averageRating}</p>
 
             <div className="flex flex-col justify-between">              
-              {reviews.map((review: Review) => (
+              {reviews.slice(startIndex, endIndex).map((review: Review) => (
                 <div
                   key={review.reviewId}
                   className="w-full my-4 border rounded-lg p-4"
@@ -300,24 +311,15 @@ export default function HotelService({
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious href="#" />
+                    <PaginationPrevious onClick={() => activePage > 1 ? setActivePage(activePage - 1) : null}/>
                   </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#" isActive>1</PaginationLink>
+                  {[...Array(lastPage)].map((_, index) => (
+                    <PaginationItem key={index} onClick={() => handlePageClick(index)}>
+                    <PaginationLink href="#" isActive={activePage === index + 1}>{index + 1}</PaginationLink>
                   </PaginationItem>
+                  ))}                 
                   <PaginationItem>
-                    <PaginationLink href="#">
-                      2
-                    </PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationLink href="#">3</PaginationLink>
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationEllipsis />
-                  </PaginationItem>
-                  <PaginationItem>
-                    <PaginationNext href="#" />
+                    <PaginationNext onClick={() => activePage < lastPage ? setActivePage(activePage + 1) : null} />
                   </PaginationItem>
                 </PaginationContent>
               </Pagination>
