@@ -89,7 +89,6 @@ export default function HotelService({
   function handlePageClick(index: number) {
     const page = index + 1;
     setActivePage(page);
-    console.log("Active page: " + page);   
   }
 
   function handleDeleteReview() {
