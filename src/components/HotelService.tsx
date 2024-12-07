@@ -67,6 +67,7 @@ export default function HotelService({
   const [method, setMethod] = useState("POST");
   const [reviewId, setReviewId] = useState("");
   const [activePage, setActivePage] = useState(1);
+  const [likedHotels, setLikeHotels] = useState<number[]>([])
   const reviewIdRef = useRef(reviewId);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,6 +83,22 @@ export default function HotelService({
     const newLikeArray = reviews.map((review) => review.likeFrom);
     setLikeArray(newLikeArray);
   }, [reviews]); // Dependency array to run effect when reviews change  
+
+  useEffect(()=>{
+      fetch(`http://localhost:8080/like_hotel?username=${username}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include", // Include cookies in the request
+    }).then((response)=>{            
+       return response.json();
+    }).then((data)=>{
+      console.log(data.hotelIds);
+      setLikeHotels(data.hotelIds);
+    });
+  },[]);
+
 
   const maxReviewsPerPage = 5;
   const startIndex = (activePage - 1) * maxReviewsPerPage;
@@ -322,12 +339,15 @@ export default function HotelService({
           ref={resultRef}
           className="grid grid-cols-1 gap-8 p-12 lg:grid-cols-2"
         >
-          {hotels.map((hotel) => (
+          {hotels.map((hotel) => (      
             <Hotel
               name={hotel.name}
               key={hotel.hotelId}
               onClick={() => openModal(hotel)}
-            />
+              liked={likedHotels.some((likedHotel) => {return likedHotel === Number(hotel.hotelId)})}
+              hotelId={hotel.hotelId}
+              username={username}          
+            />            
           ))}
         </div>
       )}
