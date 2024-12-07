@@ -218,6 +218,11 @@ export default function HotelService({
     }
   }
 
+  function handleExpediaLink(hotel: Hotel){
+    const expediaURL = `https://www.expedia.com/h${hotel.hotelId}.Hotel-Information`;
+    window.open(expediaURL, '_blank');
+  }
+
   function handleSearch(values: z.infer<typeof formSchema>) {
     const endpoint =
       "http://localhost:8080/hotels/" + encodeURIComponent(values.search);
@@ -363,6 +368,7 @@ export default function HotelService({
         {selectedHotel && (
           <>
             <h2 className="text-xl font-bold">{selectedHotel.name}</h2>
+            <img src="logo.svg" alt="Expedia Logo" className="absolute right-6 top-6 w-36" onClick={()=>handleExpediaLink(selectedHotel)}></img>
             <p className="text-sm">ID : {selectedHotel.hotelId}</p>
             <p className="text-md">
               {selectedHotel.addr}, {selectedHotel.city}, {selectedHotel.state}
