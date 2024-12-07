@@ -46,6 +46,7 @@ function App() {
             isOpen={isHistoryModalOpen}
             closeModal={() => setIsHistoryModalOpen(false)}
             histories={histories}
+            setHistories={setHistories}
             username={username}
             onLoggedIn={setIsLoggedIn}></ExpediaHistoryModal>
         </>
