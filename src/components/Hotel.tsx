@@ -58,7 +58,7 @@ export default function Hotel({ name, onClick, liked, hotelId, username }: { nam
     <div className="flex items-center justify-between">
       <Button
         onClick={onClick}
-        className="border p-8 rounded-lg text-md flex-grow mr-2 hover:bg-secondary/90 bg-white text-black"
+        className="border p-8 h-24 rounded-lg text-md flex-grow mr-2 hover:bg-secondary/90 bg-white text-black text-wrap"
       >
         {name}
       </Button>

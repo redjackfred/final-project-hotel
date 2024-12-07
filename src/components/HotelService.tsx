@@ -84,20 +84,20 @@ export default function HotelService({
     setLikeArray(newLikeArray);
   }, [reviews]); // Dependency array to run effect when reviews change  
 
-  useEffect(()=>{
-      fetch(`http://localhost:8080/like_hotel?username=${username}`, {
+  useEffect(() => {
+    fetch(`http://localhost:8080/like_hotel?username=${username}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include", // Include cookies in the request
-    }).then((response)=>{            
-       return response.json();
-    }).then((data)=>{
+    }).then((response) => {
+      return response.json();
+    }).then((data) => {
       console.log(data.hotelIds);
       setLikeHotels(data.hotelIds);
     });
-  },[]);
+  }, []);
 
 
   const maxReviewsPerPage = 5;
@@ -177,8 +177,8 @@ export default function HotelService({
         body: formBody,
       }).then((response) => {
         if (response.ok) {
-          likes.push(username);   
-          updateLikeAtIndex(index, likes);         
+          likes.push(username);
+          updateLikeAtIndex(index, likes);
           console.log("Successfully liked a review");
         } else if (response.status === 403) {
           onLoggedIn(false);
@@ -202,7 +202,7 @@ export default function HotelService({
       }).then((response) => {
         if (response.ok) {
           likes.splice(userIdx, 1);
-          updateLikeAtIndex(index, likes);      
+          updateLikeAtIndex(index, likes);
           console.log("Successfully deleted a review");
         } else if (response.status === 403) {
           onLoggedIn(false);
@@ -218,8 +218,33 @@ export default function HotelService({
     }
   }
 
-  function handleExpediaLink(hotel: Hotel){
+  function handleExpediaLink(hotel: Hotel) {
     const expediaURL = `https://www.expedia.com/h${hotel.hotelId}.Hotel-Information`;
+    const endpoint = "http://localhost:8080/expedia_history";
+    const formBody = `username=${username}&link=${expediaURL}`;
+    fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      credentials: "include",
+      body: formBody,
+    }).then((response) => {
+      if (response.ok) {
+        console.log("Successfully saved a link history");
+      } else if (response.status === 403) {
+        onLoggedIn(false);
+        console.error("Unauthorized access");
+        window.location.reload();
+      } else {
+        console.error("Failed to search for hotels");
+      }
+    })
+      .catch((error) => {
+        console.error("Failed to save a link history", error);
+      });
+
+
     window.open(expediaURL, '_blank');
   }
 
@@ -344,15 +369,15 @@ export default function HotelService({
           ref={resultRef}
           className="grid grid-cols-1 gap-8 p-12 lg:grid-cols-2"
         >
-          {hotels.map((hotel) => (      
+          {hotels.map((hotel) => (
             <Hotel
               name={hotel.name}
               key={hotel.hotelId}
               onClick={() => openModal(hotel)}
-              liked={likedHotels.some((likedHotel) => {return likedHotel === Number(hotel.hotelId)})}
+              liked={likedHotels.some((likedHotel) => { return likedHotel === Number(hotel.hotelId) })}
               hotelId={hotel.hotelId}
-              username={username}          
-            />            
+              username={username}
+            />
           ))}
         </div>
       )}
@@ -368,7 +393,7 @@ export default function HotelService({
         {selectedHotel && (
           <>
             <h2 className="text-xl font-bold">{selectedHotel.name}</h2>
-            <img src="logo.svg" alt="Expedia Logo" className="absolute right-6 top-6 w-36" onClick={()=>handleExpediaLink(selectedHotel)}></img>
+            <img src="logo.svg" alt="Expedia Logo" className="absolute right-6 top-6 w-36" onClick={() => handleExpediaLink(selectedHotel)}></img>
             <p className="text-sm">ID : {selectedHotel.hotelId}</p>
             <p className="text-md">
               {selectedHotel.addr}, {selectedHotel.city}, {selectedHotel.state}
