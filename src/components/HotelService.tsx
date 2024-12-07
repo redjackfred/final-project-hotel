@@ -45,14 +45,17 @@ interface Review {
   rating: number;
   user: string;
   date: string;
+  likeFrom: string[];
 }
 
 export default function HotelService({
   onLoggedIn,
   username,
+  lastLoginTime,
 }: {
   onLoggedIn: (isLoggedIn: boolean) => void;
   username: string;
+  lastLoginTime: string;
 }) {
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [selectedHotel, setSelectedHotel] = useState<Hotel | null>(null);
@@ -72,11 +75,18 @@ export default function HotelService({
     },
   });
   const resultRef = useRef<HTMLDivElement>(null);
+  const [likeArray, setLikeArray] = useState<string[][]>([]);
+
+  useEffect(() => {
+    // Update the likeArray whenever reviews change  
+    const newLikeArray = reviews.map((review) => review.likeFrom);
+    setLikeArray(newLikeArray);
+  }, [reviews]); // Dependency array to run effect when reviews change  
+
   const maxReviewsPerPage = 5;
   const startIndex = (activePage - 1) * maxReviewsPerPage;
   const endIndex = Math.min(startIndex + maxReviewsPerPage, reviews.length);
   const lastPage = Math.ceil(reviews.length / maxReviewsPerPage);
-
 
   const openAddReviewModal = () => {
     setIsAddReviewModalOpen(true);
@@ -93,8 +103,7 @@ export default function HotelService({
 
   function handleDeleteReview() {
     fetch(
-      `http://localhost:8080/reviews/${selectedHotel!.hotelId}?reviewid=${
-        reviewIdRef.current
+      `http://localhost:8080/reviews/${selectedHotel!.hotelId}?reviewid=${reviewIdRef.current
       }`,
       {
         method: "DELETE",
@@ -115,6 +124,81 @@ export default function HotelService({
       .catch((error) => {
         console.error("Failed to delete a review", error);
       });
+  }
+
+  // Function to update a specific index  
+  const updateLikeAtIndex = (index: number, newValue: string[]) => {
+    // Create a copy of the current array  
+    const updatedArray = [...likeArray];
+    // Update the value at the specified index  
+    updatedArray[index] = newValue;
+    // Set the new array to state  
+    setLikeArray(updatedArray);
+  };
+
+  function handleLike(review: Review, index: number) {
+    const likes = [...likeArray[index]]
+    var hasUser = false;
+    var userIdx = -1;
+    for (var i = 0; i < likes.length; i++) {
+      if (likes[i] === username) {
+        hasUser = true;
+        userIdx = i;
+        break;
+      }
+    }
+
+    if (hasUser === false) {
+      const endpoint = "http://localhost:8080/likes";
+      const formBody = `reviewid=${review.reviewId}&username=${username}`;
+      fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+        body: formBody,
+      }).then((response) => {
+        if (response.ok) {
+          likes.push(username);   
+          updateLikeAtIndex(index, likes);         
+          console.log("Successfully liked a review");
+        } else if (response.status === 403) {
+          onLoggedIn(false);
+          console.error("Unauthorized access");
+          window.location.reload();
+        } else {
+          console.error("Failed to search for hotels");
+        }
+      })
+        .catch((error) => {
+          console.error("Failed to like a review", error);
+        });
+    } else {
+      const endpoint = `http://localhost:8080/likes?reviewid=${review.reviewId}&username=${username}`;
+      fetch(endpoint, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        credentials: "include",
+      }).then((response) => {
+        if (response.ok) {
+          likes.splice(userIdx, 1);
+          updateLikeAtIndex(index, likes);      
+          console.log("Successfully deleted a review");
+        } else if (response.status === 403) {
+          onLoggedIn(false);
+          console.error("Unauthorized access");
+          window.location.reload();
+        } else {
+          console.error("Failed to search for hotels");
+        }
+      })
+        .catch((error) => {
+          console.error("Failed to like a review", error);
+        });
+    }
   }
 
   function handleSearch(values: z.infer<typeof formSchema>) {
@@ -269,8 +353,8 @@ export default function HotelService({
           <div className="w-1/2">
             <p className="text-md mb-4">Average Rating : {averageRating}</p>
 
-            <div className="flex flex-col justify-between">              
-              {reviews.slice(startIndex, endIndex).map((review: Review) => (
+            <div className="flex flex-col justify-between">
+              {reviews.slice(startIndex, endIndex).map((review: Review, index) => (
                 <div
                   key={review.reviewId}
                   className="w-full my-4 border rounded-lg p-4"
@@ -278,9 +362,8 @@ export default function HotelService({
                   <h3 className="text-xl text-slate-700 my-4">
                     {review.title}
                   </h3>
-                    <p className="break-words">{review.reviewText}</p>
+                  <p className="break-words">{review.reviewText}</p>
                   <p className="mt-2">Rating: {review.rating}</p>
-                  <p>{review.date}</p>
                   {review.user === username && (
                     <div className="flex gap-8 justify-center mt-4">
                       <Button
@@ -304,19 +387,25 @@ export default function HotelService({
                       </Button>
                     </div>
                   )}
-                  <p className="text-right">{review.user}</p>
+                  <div className="flex justify-between">
+                    <div className="w-[33%] text-left">
+                      <Button className={likeArray[startIndex + index]?.includes(username) ? "bg-red-300 text-black" : ""} onClick={() => handleLike(review, startIndex + index)}>{likeArray[startIndex + index]?.length}</Button>
+                    </div>
+                    <div className="w-[33%]"><div className="relative top-4">{review.date}</div></div>
+                    <div className="w-[33%] text-right">{review.user}</div>
+                  </div>
                 </div>
               ))}
               <Pagination>
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious onClick={() => activePage > 1 ? setActivePage(activePage - 1) : null}/>
+                    <PaginationPrevious onClick={() => activePage > 1 ? setActivePage(activePage - 1) : null} />
                   </PaginationItem>
                   {[...Array(lastPage)].map((_, index) => (
                     <PaginationItem key={index} onClick={() => handlePageClick(index)}>
-                    <PaginationLink href="#" isActive={activePage === index + 1}>{index + 1}</PaginationLink>
-                  </PaginationItem>
-                  ))}                 
+                      <PaginationLink href="#" isActive={activePage === index + 1}>{index + 1}</PaginationLink>
+                    </PaginationItem>
+                  ))}
                   <PaginationItem>
                     <PaginationNext onClick={() => activePage < lastPage ? setActivePage(activePage + 1) : null} />
                   </PaginationItem>
@@ -338,6 +427,9 @@ export default function HotelService({
           />
         </div>
       </Modal>
+      <div className="fixed bottom-8 right-8">
+        {lastLoginTime == "null" ? "You haven't logged in before" : `Last login time: ${lastLoginTime}`}
+      </div>
     </>
   );
 }

@@ -18,13 +18,10 @@ function App() {
       )}
       <div className="w-full m-auto">
         {isLoggedIn ? (
-          <HotelService onLoggedIn={setIsLoggedIn} username={username}/>
+          <HotelService onLoggedIn={setIsLoggedIn} username={username} lastLoginTime={lastLoginTime}/>
         ) : (
           <LoginForm onLoginClick={setIsLoggedIn} onUserChanged={setUsername} onLoginTimeChange={setLastLoginTime}/>
         )}
-      </div>
-      <div className="fixed bottom-8 right-8">
-        Last login time: {lastLoginTime}
       </div>
     </>
   );
