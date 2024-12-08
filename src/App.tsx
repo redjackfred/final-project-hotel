@@ -20,6 +20,13 @@ function App() {
     <APIProvider apiKey={API_KEY} onLoad={() => console.log('Maps API has loaded.')}>
       {isLoggedIn && (
         <>
+         <ExpediaHistoryModal
+            isOpen={isHistoryModalOpen}
+            closeModal={() => setIsHistoryModalOpen(false)}
+            histories={histories}
+            setHistories={setHistories}
+            username={username}
+            onLoggedIn={setIsLoggedIn}></ExpediaHistoryModal>
           <div className="fixed top-4 right-4">
             <LogoutButton onLogoutClick={setIsLoggedIn} />
           </div>
@@ -44,14 +51,7 @@ function App() {
                   console.error("Failed to fetch history", error);
                 });
             }}> History </Button>
-          </div>
-          <ExpediaHistoryModal
-            isOpen={isHistoryModalOpen}
-            closeModal={() => setIsHistoryModalOpen(false)}
-            histories={histories}
-            setHistories={setHistories}
-            username={username}
-            onLoggedIn={setIsLoggedIn}></ExpediaHistoryModal>
+          </div>         
         </>
       )}
       <div className="w-full m-auto">

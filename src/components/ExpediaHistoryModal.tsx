@@ -76,11 +76,11 @@ export default function ExpediaHistoryModal({
     return (
         <>
             <div
-                className="fixed w-screen inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50"
+                className="fixed w-screen inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50 z-50"
                 onClick={closeModal}
             >
                 <div
-                    className="absolute w-[92vw] bg-white p-6 rounded-lg shadow-lg max-h-[80%] overflow-y-auto "
+                    className="absolute w-[92vw] bg-white p-6 rounded-lg shadow-lg max-h-[80%] overflow-y-auto z-60"
                     onClick={(e) => e.stopPropagation()}
                 >                    
                     <button className="absolute top-0 right-2" onClick={closeModal}>

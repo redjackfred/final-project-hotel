@@ -5,8 +5,7 @@ import {
   Form,
   FormControl,
   FormField,
-  FormItem,
-  FormLabel,
+  FormItem,  
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
@@ -24,6 +23,8 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Map, MapCameraChangedEvent, Marker } from "@vis.gl/react-google-maps";
+import { BackgroundGradient } from "./ui/background-gradient";
+import { TypewriterEffectSmooth } from "./ui/typewriter-effect";
 
 const formSchema = z.object({
   search: z.string().min(2).max(20),
@@ -338,10 +339,35 @@ export default function HotelService({
     }
   }
 
+  const words = [
+    {
+      text: "Find",
+    },
+    {
+      text: "your",
+    },
+    {
+      text: "dream",
+    },
+    {
+      text: "Hotel",
+      className: "text-blue-500 dark:text-blue-500",
+    },
+    {
+      text: "in",
+    },
+    {
+      text: "Heaven",
+      className: "text-cyan-300 dark:text-blue-500",
+    },
+  ];
+
+
   return (
     <>
       <div className="w-full h-screen flex flex-col justify-center items-center">
-        <div className="w-96 h-48 border p-6 rounded-lg">
+        <TypewriterEffectSmooth words={words} />
+        <BackgroundGradient className="w-96 h-48 border p-6 rounded-[22px] bg-white dark:bg-zinc-900">
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(handleSearch)}
@@ -352,7 +378,7 @@ export default function HotelService({
                 name="search"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Search Hotel</FormLabel>
+                    <div className="my-8"></div>
                     <FormControl>
                       <Input placeholder="San Francisco" {...field} />
                     </FormControl>
@@ -363,7 +389,8 @@ export default function HotelService({
               <Button type="submit">Search</Button>
             </form>
           </Form>
-        </div>
+
+        </BackgroundGradient>
       </div>
       {hotels && hotels.length > 0 && (
         <div className="flex flex-col justify-center items-center">
@@ -381,7 +408,7 @@ export default function HotelService({
               ))}
             </Map>
           </div>
-          <div            
+          <div
             className="grid grid-cols-1 gap-8 p-12 lg:grid-cols-2"
           >
             {hotels.map((hotel) => (

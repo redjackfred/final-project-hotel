@@ -80,8 +80,8 @@ export default function LoginForm({
   }
 
   return (
-    <div className="w-full h-screen flex items-center">
-      <div className="flex flex-col w-96 m-auto border p-6 rounded-lg">
+    <div className="w-full h-screen flex items-center">      
+      <div className="w-96 flex flex-col w-96 m-auto border p-6 rounded-lg">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <FormField
