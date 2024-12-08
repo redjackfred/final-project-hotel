@@ -5,6 +5,8 @@ import HotelService from "./components/HotelService";
 import LogoutButton from "./components/LogoutButton";
 import { Button } from "./components/ui/button";
 import ExpediaHistoryModal from "./components/ExpediaHistoryModal";
+import { APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
+
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -12,9 +14,10 @@ function App() {
   const [username, setUsername] = useState("");
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
   const [histories, setHistories] = useState<{ link: string; time: string }[]>([]);
+  const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   return (
-    <>
+    <APIProvider apiKey={API_KEY} onLoad={() => console.log('Maps API has loaded.')}>
       {isLoggedIn && (
         <>
           <div className="fixed top-4 right-4">
@@ -55,10 +58,12 @@ function App() {
         {isLoggedIn ? (
           <HotelService onLoggedIn={setIsLoggedIn} username={username} lastLoginTime={lastLoginTime} />
         ) : (
-          <LoginForm onLoginClick={setIsLoggedIn} onUserChanged={setUsername} onLoginTimeChange={setLastLoginTime} />
+          <>
+            <LoginForm onLoginClick={setIsLoggedIn} onUserChanged={setUsername} onLoginTimeChange={setLastLoginTime} />            
+          </>
         )}
       </div>
-    </>
+    </APIProvider>
   );
 }
 

@@ -23,6 +23,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { Map, MapCameraChangedEvent, Marker } from "@vis.gl/react-google-maps";
 
 const formSchema = z.object({
   search: z.string().min(2).max(20),
@@ -365,20 +366,37 @@ export default function HotelService({
         </div>
       </div>
       {hotels && hotels.length > 0 && (
-        <div
-          ref={resultRef}
-          className="grid grid-cols-1 gap-8 p-12 lg:grid-cols-2"
-        >
-          {hotels.map((hotel) => (
-            <Hotel
-              name={hotel.name}
-              key={hotel.hotelId}
-              onClick={() => openModal(hotel)}
-              liked={likedHotels.some((likedHotel) => { return likedHotel === Number(hotel.hotelId) })}
-              hotelId={hotel.hotelId}
-              username={username}
-            />
-          ))}
+        <div className="flex flex-col justify-center items-center">
+          <div className="w-[90%] h-[60vh]" ref={resultRef}>
+            <Map
+              defaultZoom={9}
+              defaultCenter={{ lat: 37.7749, lng: -122.4194 }}
+              disableDefaultUI
+              controlled={false}
+              onCameraChanged={(ev: MapCameraChangedEvent) =>
+                console.log('camera changed:', ev.detail.center, 'zoom:', ev.detail.zoom)
+              }>
+              {hotels.map((hotel) => (
+                <Marker position={{ lat: Number(hotel.lat), lng: Number(hotel.lng) }} />
+              ))}
+            </Map>
+          </div>
+          <div            
+            className="grid grid-cols-1 gap-8 p-12 lg:grid-cols-2"
+          >
+            {hotels.map((hotel) => (
+              <Hotel
+                name={hotel.name}
+                key={hotel.hotelId}
+                onClick={() => openModal(hotel)}
+                liked={likedHotels.some((likedHotel) => { return likedHotel === Number(hotel.hotelId) })}
+                hotelId={hotel.hotelId}
+                username={username}
+                lat={Number(hotel.lat)}
+                lng={Number(hotel.lng)}
+              />
+            ))}
+          </div>
         </div>
       )}
       <Modal
