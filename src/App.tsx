@@ -5,7 +5,7 @@ import HotelService from "./components/HotelService";
 import LogoutButton from "./components/LogoutButton";
 import { Button } from "./components/ui/button";
 import ExpediaHistoryModal from "./components/ExpediaHistoryModal";
-import { APIProvider, Map, MapCameraChangedEvent } from '@vis.gl/react-google-maps';
+import { APIProvider } from '@vis.gl/react-google-maps';
 
 
 function App() {

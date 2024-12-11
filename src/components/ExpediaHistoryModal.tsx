@@ -1,4 +1,3 @@
-import { set } from "zod";
 
 interface ModalProps {
     isOpen: boolean;
