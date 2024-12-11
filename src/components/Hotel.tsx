@@ -71,7 +71,7 @@ export default function Hotel({ name, onClick, liked, hotelId, username, lat, ln
               setIsGoogleMapOpen(false)
               e.stopPropagation();
             }}>
-              <div className="fixed top-1/4 left-1/4 w-1/2 h-1/2 z-60">
+              <div className="fixed top-1/4 left-1/4 w-1/2 h-1/2 z-60" onClick={(e)=>e.stopPropagation()}>
                 <Map
                   defaultZoom={12}
                   defaultCenter={{ lat: lat, lng: lng }}
